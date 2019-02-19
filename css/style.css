@@ -1,0 +1,44 @@
+/* 
+Display image size: 300 x 205
+page width: 1280
+results width: 21%
+nav height: 90px
+footer height: 80px
+nav buttons: 110 x 55px 10px topleft topright raidus 2px border
+14px gutter around page elements
+
+*/
+
+body {
+  width: 1280px;
+}
+
+main > section:first-child {
+  width: 100%;
+  overflow: auto;
+}
+
+#survey_images {
+  height: 314px;
+}
+
+#survey_images img {
+  display: inline-block;
+  width: 300px;
+  border: 1px black solid;
+  margin: 0 14px 14px 0;
+  vertical-align: top;
+  max-height: 300px;
+}
+
+main > section:nth-child(2) {
+  display: inline-block;
+  float: left;
+  width: 270px;
+  overflow: auto;
+  height: 100%;
+}
+
+.hidden {
+  display: none;
+}
