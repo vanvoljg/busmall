@@ -22,11 +22,13 @@ body {
 #results {
   display: inline-block;
   float: left;
-  width: 21%;
+  width: 270px;
   overflow: auto;
   height: 100%;
 }
 
 #survey_images img {
   width: 300px;
+  border: 1px black solid;
 }
+
