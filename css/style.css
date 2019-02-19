@@ -1,0 +1,32 @@
+/* 
+Display image size: 300 x 205
+page width: 1280
+results width: 21%
+nav height: 90px
+footer height: 80px
+nav buttons: 110 x 55px 10px topleft topright raidus 2px border
+14px gutter around page elements
+
+*/
+
+body {
+  width: 1280px;
+}
+
+#survey {
+  height: 550px;
+  width: 100%;
+  overflow: auto;
+}
+
+#results {
+  display: inline-block;
+  float: left;
+  width: 21%;
+  overflow: auto;
+  height: 100%;
+}
+
+#survey_images img {
+  width: 300px;
+}
