@@ -83,8 +83,10 @@ var render_results = function() {
   var target = document.getElementById('survey');
   target.className = 'hidden';
 
+  // remove hidden class from results
   target = document.getElementById('results');
   target.className = '';
+
   var ul_el = document.createElement('ul');
   var li_el = document.createElement('li');
 
