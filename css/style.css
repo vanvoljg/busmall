@@ -13,13 +13,25 @@ body {
   width: 1280px;
 }
 
-#survey {
-  height: 550px;
+main > section:first-child {
   width: 100%;
   overflow: auto;
 }
 
-#results {
+#survey_images {
+  height: 314px;
+}
+
+#survey_images img {
+  display: inline-block;
+  width: 300px;
+  border: 1px black solid;
+  margin: 0 14px 14px 0;
+  vertical-align: top;
+  max-height: 300px;
+}
+
+main > section:nth-child(2) {
   display: inline-block;
   float: left;
   width: 270px;
@@ -27,8 +39,6 @@ body {
   height: 100%;
 }
 
-#survey_images img {
-  width: 300px;
-  border: 1px black solid;
+.hidden {
+  display: none;
 }
-
