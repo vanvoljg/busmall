@@ -77,17 +77,18 @@ var pick_new_products = function() {
   } while (displayed_images.length < NUM_TO_DISPLAY);
 };
 
-// data handler: either retrieves or stores the data
+// data handler: retrieves and stores data, returns updated data set object
 var create_data = function() {
   // handle the data object: if exists in local storage, retrieve and add current
   // data to totals, then save data to storage again
   // if not exists, create data store and save to local storage
   // we're assuming no new products are created. if there are a different
-  // number of products, then we need to recreate the datastore.
+  // number of products than data points, then we need to recreate the datastore.
+  // return the data object
   var data;
 
-  if (localStorage.getItem('datastore') ||
-    list_of_products.length === JSON.parse(localStorage.getItem('datastore')).length) {
+  if (localStorage.getItem('datastore') &&
+    list_of_products.length === JSON.parse(localStorage.getItem('datastore')).labels.length) {
     // if exists, retrieve and concatenate
     data = JSON.parse(localStorage.getItem('datastore'));
 
@@ -101,7 +102,7 @@ var create_data = function() {
     localStorage.setItem('datastore', JSON.stringify(data));
     console.log('updated data saved to local storage');
   } else {
-    // does not exist, so create new datastore with current set
+    // does not exist or is malformed, so create new datastore with current set
     data = {
       title: '# of total clicks',
       chart_type: 'bar',
