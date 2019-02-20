@@ -1,8 +1,9 @@
 'use strict';
 
+// -----------------------------------------------------------------------------
 // Global variables
 
-var CLICK_LIMIT = 5;
+var CLICK_LIMIT = 25;
 var NUM_TO_DISPLAY = 3;
 var list_of_products = [];
 var displayed_images = [];
@@ -76,23 +77,53 @@ var pick_new_products = function() {
   } while (displayed_images.length < NUM_TO_DISPLAY);
 };
 
-var render_results = function() {
-  // remove hidden class from results
-  var target = document.getElementById('results');
-  target.className = '';
+// data handler: either retrieves or stores the data
+var create_data = function() {
+  // handle the data object: if exists in local storage, retrieve and add current
+  // data to totals, then save data to storage again
+  // if not exists, create data store and save to local storage
+  // we're assuming no new products are created. if there are a different
+  // number of products, then we need to recreate the datastore.
+  var data;
 
-  var chart_type = 'bar';
-  var chart_labels = [];
-  var clicked = [];
-  var displayed = [];
-  var ctx = document.getElementById('results_canvas').getContext('2d');
+  if (localStorage.getItem('datastore') ||
+    list_of_products.length === JSON.parse(localStorage.getItem('datastore')).length) {
+    // if exists, retrieve and concatenate
+    data = JSON.parse(localStorage.getItem('datastore'));
 
-  // create data, labels, # times displayed
-  for (var i = 0, j = list_of_products.length; i < j; i++) {
-    chart_labels.push(list_of_products[i].caption);
-    clicked.push(list_of_products[i].clicked_count);
-    displayed.push(list_of_products[i].displayed_count);
+    // create data, labels, # times displayed
+    for (var i = 0, j = list_of_products.length; i < j; i++) {
+      // data.labels.push(list_of_products[i].caption);
+      data.clicked[i] += list_of_products[i].clicked_count;
+      data.displayed[i] += list_of_products[i].displayed_count;
+    }
+    // save the updated data
+    localStorage.setItem('datastore', JSON.stringify(data));
+    console.log('updated data saved to local storage');
+  } else {
+    // does not exist, so create new datastore with current set
+    data = {
+      title: '# of total clicks',
+      chart_type: 'bar',
+      labels: [],
+      clicked: [],
+      displayed: []
+    };
+    // create data, labels, # times displayed
+    for (var k = 0, l = list_of_products.length; k < l; k++) {
+      data.labels.push(list_of_products[k].caption);
+      data.clicked.push(list_of_products[k].clicked_count);
+      data.displayed.push(list_of_products[k].displayed_count);
+    }
+    // save data to datastore
+    localStorage.setItem('datastore', JSON.stringify(data));
+    console.log('data saved to local storage');
   }
+  return data;
+};
+
+// chart rendering function
+var render_results = function(data, ctx) {
 
   var colors_bg = ctx.createLinearGradient(0, 0, 1280, 600);
   colors_bg.addColorStop(0, 'rgba(255, 99, 132, 0.5)');
@@ -109,12 +140,12 @@ var render_results = function() {
   colors_fg.addColorStop(1, 'rgba(153, 102, 255, 0.9)');
 
   var results_chart = new Chart(ctx, { //eslint-disable-line no-undef,no-unused-vars
-    type: chart_type,
+    type: data.chart_type,
     data: {
-      labels: chart_labels,
+      labels: data.labels,
       datasets: [{
-        label: '# of total clicks',
-        data: clicked,
+        label: data.title,
+        data: data.clicked,
         backgroundColor: colors_bg,
         borderColor: colors_fg,
         borderWidth: 2
@@ -156,10 +187,18 @@ var handle_click = function(event) {
   increment_count(event.target.name);
 
   if (CLICK_LIMIT <= 0) {
+    // remove listener
     image_container.removeEventListener('click', handle_click);
 
+    // remove hidden class from results
+    var target = document.getElementById('results');
+    target.className = '';
+
     //render list
-    render_results();
+    var ctx = document.getElementById('results_canvas').getContext('2d');
+    var data = create_data();
+    render_results(data, ctx);
+
     return;
   }
   pick_new_products();
@@ -167,6 +206,9 @@ var handle_click = function(event) {
   render_displayed_products();
 
 };
+
+// -----------------------------------------------------------------------------
+// main app init
 
 var init = function() {
   // create the objects
