@@ -32,11 +32,17 @@ main > section:first-child {
 }
 
 main > section:nth-child(2) {
-  display: inline-block;
+  /* display: inline-block; */
   float: left;
   width: 270px;
   overflow: auto;
   height: 100%;
+}
+
+#results {
+  width: 1280px;
+  height: 600px;
+  overflow: hidden;
 }
 
 .hidden {
