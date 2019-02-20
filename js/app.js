@@ -2,7 +2,7 @@
 
 // Global variables
 
-var CLICK_LIMIT = 25;
+var CLICK_LIMIT = 5;
 var NUM_TO_DISPLAY = 3;
 var list_of_products = [];
 var displayed_images = [];
@@ -29,22 +29,30 @@ var Product = function(prod_id, url, caption) {
   list_of_products.push(this);
 };
 
-Product.prototype.render_img = function(target) {
-  target.src = this.url;
-  target.name = this.prod_id;
-  this.displayed_count++;
-};
-
 // -----------------------------------------------------------------------------
 // Global function definitions
+
+// render a specific image
+// need a target container --> id = 'survey_images'
+// need which image to render - base on goat object, so pass............
+// either the goat or the prod_id... prod_id will be easier in the end, but
+// for now, just pass the goat and target, target being the image and h2 itself
+var render_product = function(goat, target_img, target_h2) {
+  target_img.src = goat.url;
+  target_img.name = goat.prod_id;
+  target_img.setAttribute('alt', goat.prod_id);
+  target_h2.textContent = goat.caption;
+  goat.displayed_count++;
+};
 
 // render displayed_products array
 var render_displayed_products = function() {
   // display current set of images
-  var target;
+  var target_img, target_h2;
   for (var i = 0, j = displayed_images.length; i < j; i++) {
-    target = document.getElementById(`image${i}`);
-    displayed_images[i].render_img(target);
+    target_img = document.getElementById(`image${i}`);
+    target_h2 = document.getElementById(`img${i}_h2`);
+    render_product(displayed_images[i], target_img, target_h2);
   }
 };
 
@@ -79,27 +87,28 @@ var render_results = function() {
   var displayed = [];
   var ctx = document.getElementById('results_canvas').getContext('2d');
 
+  // create data, labels, # times displayed
   for (var i = 0, j = list_of_products.length; i < j; i++) {
     chart_labels.push(list_of_products[i].caption);
     clicked.push(list_of_products[i].clicked_count);
     displayed.push(list_of_products[i].displayed_count);
   }
 
-  var colors_bg = ctx.createLinearGradient(0, 0, 1280, 0);
+  var colors_bg = ctx.createLinearGradient(0, 0, 1280, 600);
   colors_bg.addColorStop(0, 'rgba(255, 99, 132, 0.5)');
   colors_bg.addColorStop(.25, 'rgba(54, 162, 235, 0.5)');
   colors_bg.addColorStop(.5, 'rgba(255, 206, 86, 0.5)');
   colors_bg.addColorStop(.75, 'rgba(75, 192, 192, 0.5)');
   colors_bg.addColorStop(1, 'rgba(153, 102, 255, 0.5)');
 
-  var colors_fg = ctx.createLinearGradient(0, 0, 1280, 0);
+  var colors_fg = ctx.createLinearGradient(0, 0, 1280, 600);
   colors_fg.addColorStop(0, 'rgba(255, 99, 132, 0.9');
   colors_fg.addColorStop(.25, 'rgba(54, 162, 235, 0.9)');
   colors_fg.addColorStop(.5, 'rgba(255, 206, 86, 0.9');
   colors_fg.addColorStop(.75, 'rgba(75, 192, 192, 0.9');
   colors_fg.addColorStop(1, 'rgba(153, 102, 255, 0.9)');
 
-  var results_chart = new Chart(ctx, {
+  var results_chart = new Chart(ctx, { //eslint-disable-line no-undef,no-unused-vars
     type: chart_type,
     data: {
       labels: chart_labels,
