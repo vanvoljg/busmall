@@ -32,13 +32,19 @@ main > section:first-child {
 }
 
 main > section:nth-child(2) {
-  display: inline-block;
+  /* display: inline-block; */
   float: left;
   width: 270px;
   overflow: auto;
   height: 100%;
 }
 
-.hidden {
+#results {
+  width: 600px;
+  height: 600px;
+  overflow: hidden;
+}
+
+#results.hidden {
   display: none;
 }
