@@ -87,25 +87,74 @@ var render_results = function() {
   target = document.getElementById('results');
   target.className = '';
 
-  var ul_el = document.createElement('ul');
-  var li_el = document.createElement('li');
-
-  li_el.textContent = 'Results';
-  ul_el.appendChild(li_el);
+  var chart_labels = [];
+  var clicked = [];
+  var displayed = [];
 
   for (var i = 0, j = list_of_products.length; i < j; i++) {
-    li_el = document.createElement('li');
-    li_el.textContent = list_of_products[i].clicked_count;
-
-    if (list_of_products[i].clicked_count === 1) li_el.textContent += ' vote ';
-    else li_el.textContent += ' votes ';
-
-    li_el.textContent += `for the ${list_of_products[i].caption}`;
-    ul_el.appendChild(li_el);
+    chart_labels.push(list_of_products[i].caption);
+    clicked.push(list_of_products[i].clicked_count);
+    displayed.push(list_of_products[i].displayed_count);
   }
 
-  target.appendChild(ul_el);
+  var ctx = document.getElementById('results_canvas').getContext('2d');
+  var results_chart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: chart_labels,
+      datasets: [{
+        label: '# of total clicks',
+        data: clicked,
+        backgroundColor: [
+          'rgba(255, 99, 132, 0.8)',
+          'rgba(54, 162, 235, 0.8)',
+          'rgba(255, 206, 86, 0.8)',
+          'rgba(75, 192, 192, 0.8)',
+          'rgba(153, 102, 255, 0.8)',
+          'rgba(255, 159, 64, 0.8)',
+        ],
+        borderColor: [
+          'rgba(255, 99, 132, 1.0)',
+          'rgba(54, 162, 235, 1.0)',
+          'rgba(255, 206, 86, 1.0)',
+          'rgba(75, 192, 192, 1.0)',
+          'rgba(153, 102, 255, 1.0)',
+          'rgba(255, 159, 64, 1.0)'
+        ],
+        borderWidth: 2
+      }]
+    },
+    options: {
+      scales: {
+        yAxes: [{
+          ticks: {
+            beginAtZero: true
+          }
+        }]
+      }
+    }
+  });
+
 };
+
+// var ul_el = document.createElement('ul');
+// var li_el = document.createElement('li');
+
+// li_el.textContent = 'Results';
+// ul_el.appendChild(li_el);
+
+// for (var i = 0, j = list_of_products.length; i < j; i++) {
+//   li_el = document.createElement('li');
+//   li_el.textContent = list_of_products[i].clicked_count;
+
+//   if (list_of_products[i].clicked_count === 1) li_el.textContent += ' vote ';
+//   else li_el.textContent += ' votes ';
+
+//   li_el.textContent += `for the ${list_of_products[i].caption}`;
+//   ul_el.appendChild(li_el);
+// }
+
+// target.appendChild(ul_el);
 
 // -----------------------------------------------------------------------------
 // click handler callback

@@ -40,11 +40,11 @@ main > section:nth-child(2) {
 }
 
 #results {
-  width: 600px;
+  width: 1280px;
   height: 600px;
   overflow: hidden;
 }
 
-#results.hidden {
+.hidden {
   display: none;
 }
