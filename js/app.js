@@ -133,6 +133,19 @@ var render_results = function() {
 
 };
 
+// takes a specific goat prod_id and increments clicked_count for that goat
+var increment_count = function(goat_prod_id) {
+  var max = list_of_products.length;
+  var prod_ids = [];
+
+  for (var i = 0; i < max; i++) {
+    prod_ids.push(list_of_products[i].prod_id);
+  }
+
+  var idx = prod_ids.indexOf(goat_prod_id);
+  list_of_products[idx].clicked_count++;
+};
+
 // -----------------------------------------------------------------------------
 // click handler callback
 
@@ -140,16 +153,7 @@ var handle_click = function(event) {
   if (event.target.tagName !== 'IMG') return;
   CLICK_LIMIT--;
 
-  var max = list_of_products.length;
-  var clicked_prod_id = event.target.name;
-  var prod_ids = [];
-
-  for (var i = 0; i < max; i++) {
-    prod_ids.push(list_of_products[i].prod_id);
-  }
-
-  var idx = prod_ids.indexOf(clicked_prod_id);
-  list_of_products[idx].clicked_count++;
+  increment_count(event.target.name);
 
   if (CLICK_LIMIT <= 0) {
     image_container.removeEventListener('click', handle_click);
