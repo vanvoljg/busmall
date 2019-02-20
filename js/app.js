@@ -1,15 +1,5 @@
 'use strict';
 
-/*
-
-need globals:
-CLICK_LIMIT
-image array
-state array/object
-event on image section
-
-*/
-
 // Global variables
 
 var CLICK_LIMIT = 25;
@@ -79,17 +69,15 @@ var pick_new_products = function() {
 };
 
 var render_results = function() {
-  // hide survey first
-  var target = document.getElementById('survey');
-  target.className = 'hidden';
-
   // remove hidden class from results
-  target = document.getElementById('results');
+  var target = document.getElementById('results');
   target.className = '';
 
+  var chart_type = 'bar';
   var chart_labels = [];
   var clicked = [];
   var displayed = [];
+  var ctx = document.getElementById('results_canvas').getContext('2d');
 
   for (var i = 0, j = list_of_products.length; i < j; i++) {
     chart_labels.push(list_of_products[i].caption);
@@ -97,30 +85,29 @@ var render_results = function() {
     displayed.push(list_of_products[i].displayed_count);
   }
 
-  var ctx = document.getElementById('results_canvas').getContext('2d');
+  var colors_bg = ctx.createLinearGradient(0, 0, 1280, 0);
+  colors_bg.addColorStop(0, 'rgba(255, 99, 132, 0.5)');
+  colors_bg.addColorStop(.25, 'rgba(54, 162, 235, 0.5)');
+  colors_bg.addColorStop(.5, 'rgba(255, 206, 86, 0.5)');
+  colors_bg.addColorStop(.75, 'rgba(75, 192, 192, 0.5)');
+  colors_bg.addColorStop(1, 'rgba(153, 102, 255, 0.5)');
+
+  var colors_fg = ctx.createLinearGradient(0, 0, 1280, 0);
+  colors_fg.addColorStop(0, 'rgba(255, 99, 132, 0.9');
+  colors_fg.addColorStop(.25, 'rgba(54, 162, 235, 0.9)');
+  colors_fg.addColorStop(.5, 'rgba(255, 206, 86, 0.9');
+  colors_fg.addColorStop(.75, 'rgba(75, 192, 192, 0.9');
+  colors_fg.addColorStop(1, 'rgba(153, 102, 255, 0.9)');
+
   var results_chart = new Chart(ctx, {
-    type: 'bar',
+    type: chart_type,
     data: {
       labels: chart_labels,
       datasets: [{
         label: '# of total clicks',
         data: clicked,
-        backgroundColor: [
-          'rgba(255, 99, 132, 0.8)',
-          'rgba(54, 162, 235, 0.8)',
-          'rgba(255, 206, 86, 0.8)',
-          'rgba(75, 192, 192, 0.8)',
-          'rgba(153, 102, 255, 0.8)',
-          'rgba(255, 159, 64, 0.8)',
-        ],
-        borderColor: [
-          'rgba(255, 99, 132, 1.0)',
-          'rgba(54, 162, 235, 1.0)',
-          'rgba(255, 206, 86, 1.0)',
-          'rgba(75, 192, 192, 1.0)',
-          'rgba(153, 102, 255, 1.0)',
-          'rgba(255, 159, 64, 1.0)'
-        ],
+        backgroundColor: colors_bg,
+        borderColor: colors_fg,
         borderWidth: 2
       }]
     },
@@ -136,25 +123,6 @@ var render_results = function() {
   });
 
 };
-
-// var ul_el = document.createElement('ul');
-// var li_el = document.createElement('li');
-
-// li_el.textContent = 'Results';
-// ul_el.appendChild(li_el);
-
-// for (var i = 0, j = list_of_products.length; i < j; i++) {
-//   li_el = document.createElement('li');
-//   li_el.textContent = list_of_products[i].clicked_count;
-
-//   if (list_of_products[i].clicked_count === 1) li_el.textContent += ' vote ';
-//   else li_el.textContent += ' votes ';
-
-//   li_el.textContent += `for the ${list_of_products[i].caption}`;
-//   ul_el.appendChild(li_el);
-// }
-
-// target.appendChild(ul_el);
 
 // -----------------------------------------------------------------------------
 // click handler callback
@@ -174,20 +142,17 @@ var handle_click = function(event) {
   var idx = prod_ids.indexOf(clicked_prod_id);
   list_of_products[idx].clicked_count++;
 
+  if (CLICK_LIMIT <= 0) {
+    image_container.removeEventListener('click', handle_click);
+
+    //render list
+    render_results();
+    return;
+  }
   pick_new_products();
 
   render_displayed_products();
 
-  if (CLICK_LIMIT <= 0) {
-    image_container.removeEventListener('click', handle_click);
-
-    // hide survey, show results
-
-
-    //render list
-    render_results();
-
-  }
 };
 
 var init = function() {
