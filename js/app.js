@@ -1,15 +1,6 @@
 'use strict';
 
-/*
-
-need globals:
-CLICK_LIMIT
-image array
-state array/object
-event on image section
-
-*/
-
+// -----------------------------------------------------------------------------
 // Global variables
 
 var CLICK_LIMIT = 25;
@@ -39,22 +30,30 @@ var Product = function(prod_id, url, caption) {
   list_of_products.push(this);
 };
 
-Product.prototype.render_img = function(target) {
-  target.src = this.url;
-  target.name = this.prod_id;
-  this.displayed_count++;
-};
-
 // -----------------------------------------------------------------------------
 // Global function definitions
+
+// render a specific image
+// need a target container --> id = 'survey_images'
+// need which image to render - base on goat object, so pass............
+// either the goat or the prod_id... prod_id will be easier in the end, but
+// for now, just pass the goat and target, target being the image and h2 itself
+var render_product = function(goat, target_img, target_h2) {
+  target_img.src = goat.url;
+  target_img.name = goat.prod_id;
+  target_img.setAttribute('alt', goat.prod_id);
+  target_h2.textContent = goat.caption;
+  goat.displayed_count++;
+};
 
 // render displayed_products array
 var render_displayed_products = function() {
   // display current set of images
-  var target;
+  var target_img, target_h2;
   for (var i = 0, j = displayed_images.length; i < j; i++) {
-    target = document.getElementById(`image${i}`);
-    displayed_images[i].render_img(target);
+    target_img = document.getElementById(`image${i}`);
+    target_h2 = document.getElementById(`img${i}_h2`);
+    render_product(displayed_images[i], target_img, target_h2);
   }
 };
 
@@ -78,49 +77,77 @@ var pick_new_products = function() {
   } while (displayed_images.length < NUM_TO_DISPLAY);
 };
 
-var render_results = function() {
-  // hide survey first
-  var target = document.getElementById('survey');
-  target.className = 'hidden';
+// data handler: either retrieves or stores the data
+var create_data = function() {
+  // handle the data object: if exists in local storage, retrieve and add current
+  // data to totals, then save data to storage again
+  // if not exists, create data store and save to local storage
+  // we're assuming no new products are created. if there are a different
+  // number of products, then we need to recreate the datastore.
+  var data;
 
-  // remove hidden class from results
-  target = document.getElementById('results');
-  target.className = '';
+  if (localStorage.getItem('datastore') ||
+    list_of_products.length === JSON.parse(localStorage.getItem('datastore')).length) {
+    // if exists, retrieve and concatenate
+    data = JSON.parse(localStorage.getItem('datastore'));
 
-  var chart_labels = [];
-  var clicked = [];
-  var displayed = [];
-
-  for (var i = 0, j = list_of_products.length; i < j; i++) {
-    chart_labels.push(list_of_products[i].caption);
-    clicked.push(list_of_products[i].clicked_count);
-    displayed.push(list_of_products[i].displayed_count);
+    // create data, labels, # times displayed
+    for (var i = 0, j = list_of_products.length; i < j; i++) {
+      // data.labels.push(list_of_products[i].caption);
+      data.clicked[i] += list_of_products[i].clicked_count;
+      data.displayed[i] += list_of_products[i].displayed_count;
+    }
+    // save the updated data
+    localStorage.setItem('datastore', JSON.stringify(data));
+    console.log('updated data saved to local storage');
+  } else {
+    // does not exist, so create new datastore with current set
+    data = {
+      title: '# of total clicks',
+      chart_type: 'bar',
+      labels: [],
+      clicked: [],
+      displayed: []
+    };
+    // create data, labels, # times displayed
+    for (var k = 0, l = list_of_products.length; k < l; k++) {
+      data.labels.push(list_of_products[k].caption);
+      data.clicked.push(list_of_products[k].clicked_count);
+      data.displayed.push(list_of_products[k].displayed_count);
+    }
+    // save data to datastore
+    localStorage.setItem('datastore', JSON.stringify(data));
+    console.log('data saved to local storage');
   }
+  return data;
+};
 
-  var ctx = document.getElementById('results_canvas').getContext('2d');
-  var results_chart = new Chart(ctx, {
-    type: 'bar',
+// chart rendering function
+var render_results = function(data, ctx) {
+
+  var colors_bg = ctx.createLinearGradient(0, 0, 1280, 600);
+  colors_bg.addColorStop(0, 'rgba(255, 99, 132, 0.5)');
+  colors_bg.addColorStop(.25, 'rgba(54, 162, 235, 0.5)');
+  colors_bg.addColorStop(.5, 'rgba(255, 206, 86, 0.5)');
+  colors_bg.addColorStop(.75, 'rgba(75, 192, 192, 0.5)');
+  colors_bg.addColorStop(1, 'rgba(153, 102, 255, 0.5)');
+
+  var colors_fg = ctx.createLinearGradient(0, 0, 1280, 600);
+  colors_fg.addColorStop(0, 'rgba(255, 99, 132, 0.9');
+  colors_fg.addColorStop(.25, 'rgba(54, 162, 235, 0.9)');
+  colors_fg.addColorStop(.5, 'rgba(255, 206, 86, 0.9');
+  colors_fg.addColorStop(.75, 'rgba(75, 192, 192, 0.9');
+  colors_fg.addColorStop(1, 'rgba(153, 102, 255, 0.9)');
+
+  var results_chart = new Chart(ctx, { //eslint-disable-line no-undef,no-unused-vars
+    type: data.chart_type,
     data: {
-      labels: chart_labels,
+      labels: data.labels,
       datasets: [{
-        label: '# of total clicks',
-        data: clicked,
-        backgroundColor: [
-          'rgba(255, 99, 132, 0.8)',
-          'rgba(54, 162, 235, 0.8)',
-          'rgba(255, 206, 86, 0.8)',
-          'rgba(75, 192, 192, 0.8)',
-          'rgba(153, 102, 255, 0.8)',
-          'rgba(255, 159, 64, 0.8)',
-        ],
-        borderColor: [
-          'rgba(255, 99, 132, 1.0)',
-          'rgba(54, 162, 235, 1.0)',
-          'rgba(255, 206, 86, 1.0)',
-          'rgba(75, 192, 192, 1.0)',
-          'rgba(153, 102, 255, 1.0)',
-          'rgba(255, 159, 64, 1.0)'
-        ],
+        label: data.title,
+        data: data.clicked,
+        backgroundColor: colors_bg,
+        borderColor: colors_fg,
         borderWidth: 2
       }]
     },
@@ -137,24 +164,18 @@ var render_results = function() {
 
 };
 
-// var ul_el = document.createElement('ul');
-// var li_el = document.createElement('li');
+// takes a specific goat prod_id and increments clicked_count for that goat
+var increment_count = function(goat_prod_id) {
+  var max = list_of_products.length;
+  var prod_ids = [];
 
-// li_el.textContent = 'Results';
-// ul_el.appendChild(li_el);
+  for (var i = 0; i < max; i++) {
+    prod_ids.push(list_of_products[i].prod_id);
+  }
 
-// for (var i = 0, j = list_of_products.length; i < j; i++) {
-//   li_el = document.createElement('li');
-//   li_el.textContent = list_of_products[i].clicked_count;
-
-//   if (list_of_products[i].clicked_count === 1) li_el.textContent += ' vote ';
-//   else li_el.textContent += ' votes ';
-
-//   li_el.textContent += `for the ${list_of_products[i].caption}`;
-//   ul_el.appendChild(li_el);
-// }
-
-// target.appendChild(ul_el);
+  var idx = prod_ids.indexOf(goat_prod_id);
+  list_of_products[idx].clicked_count++;
+};
 
 // -----------------------------------------------------------------------------
 // click handler callback
@@ -163,32 +184,31 @@ var handle_click = function(event) {
   if (event.target.tagName !== 'IMG') return;
   CLICK_LIMIT--;
 
-  var max = list_of_products.length;
-  var clicked_prod_id = event.target.name;
-  var prod_ids = [];
+  increment_count(event.target.name);
 
-  for (var i = 0; i < max; i++) {
-    prod_ids.push(list_of_products[i].prod_id);
+  if (CLICK_LIMIT <= 0) {
+    // remove listener
+    image_container.removeEventListener('click', handle_click);
+
+    // remove hidden class from results
+    var target = document.getElementById('results');
+    target.className = '';
+
+    //render list
+    var ctx = document.getElementById('results_canvas').getContext('2d');
+    var data = create_data();
+    render_results(data, ctx);
+
+    return;
   }
-
-  var idx = prod_ids.indexOf(clicked_prod_id);
-  list_of_products[idx].clicked_count++;
-
   pick_new_products();
 
   render_displayed_products();
 
-  if (CLICK_LIMIT <= 0) {
-    image_container.removeEventListener('click', handle_click);
-
-    // hide survey, show results
-
-
-    //render list
-    render_results();
-
-  }
 };
+
+// -----------------------------------------------------------------------------
+// main app init
 
 var init = function() {
   // create the objects

@@ -9,34 +9,62 @@ nav buttons: 110 x 55px 10px topleft topright raidus 2px border
 
 */
 
+* {
+  box-sizing: border-box;
+}
+
 body {
   width: 1280px;
 }
 
-main > section:first-child {
-  width: 100%;
-  overflow: auto;
+h2 {
+  font-size: 24px;
+  margin: .5em 0 0 .5em;
 }
 
 #survey_images {
-  height: 314px;
+  display: block;
+  overflow: auto;
+  height: 390px;
+  margin: .5em 0 0 .5em;
 }
+
+#survey_images h3 {
+  font-size: 20px;
+  display: block;
+  position: absolute;
+  bottom: 7px;
+  left: 7px;
+}
+
+#survey_images span {
+  float: left;
+  width: 328px;
+  border: 1px black solid;
+  height: inherit;
+  position: relative;
+}
+
+/* #survey_images {
+  height: 314px;
+} */
 
 #survey_images img {
   display: inline-block;
   width: 300px;
   border: 1px black solid;
-  margin: 0 14px 14px 0;
+  margin: 14px 0 0 14px;
   vertical-align: top;
   max-height: 300px;
 }
 
-main > section:nth-child(2) {
+main > section {
   /* display: inline-block; */
   float: left;
-  width: 270px;
+  width: 100%;
   overflow: auto;
   height: 100%;
+  margin: .5em 0 0 .5em;
 }
 
 #results {
