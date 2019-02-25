@@ -15,6 +15,75 @@ nav buttons: 110 x 55px 10px topleft topright raidus 2px border
 
 body {
   width: 1280px;
+  background: #eee
+}
+
+header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 1280px;
+  min-width: 850px;
+  background: #ddd;
+  border: 1px #888 solid;
+  z-index: 10;
+}
+
+header > div {
+  float: left;
+}
+
+header > div > * {
+  float: left;
+  margin: 0 10px 0 0;
+}
+
+header > div > span {
+  font-size: 36px;
+  line-height: 50px;
+  height: 50px;
+  vertical-align: top;
+}
+
+header > nav {
+  float: right;
+}
+
+header li {
+  float: left;
+  list-style-type: none;
+  width: 100px;
+  height: 50px;
+  text-align: center;
+  border-left: 1px #888 solid;
+  transition-duration: 100ms;
+}
+
+header li:hover {
+  box-shadow: 0px 0px 5px 5px inset #fff;
+  transition-duration: 100ms;
+}
+
+header li a {
+  display: inline-block;
+  line-height: 45px;
+  margin: auto 0;
+  width: 100%;
+  vertical-align: bottom;
+  text-decoration: none;
+  color: inherit;
+}
+
+main {
+  margin: 60px 10px;
+  background: #ddd;
+  overflow: hidden;
+  min-height: calc(100vh - 120px);
+  border: 1px solid #888;
+}
+
+main p {
+  margin: 10px;
 }
 
 h2 {
@@ -40,7 +109,7 @@ h2 {
 #survey_images span {
   float: left;
   width: 328px;
-  border: 1px black solid;
+  border: 1px #888 solid;
   height: inherit;
   position: relative;
 }
@@ -52,7 +121,7 @@ h2 {
 #survey_images img {
   display: inline-block;
   width: 300px;
-  border: 1px black solid;
+  border: 1px #888 solid;
   margin: 14px 0 0 14px;
   vertical-align: top;
   max-height: 300px;
@@ -61,16 +130,27 @@ h2 {
 main > section {
   /* display: inline-block; */
   float: left;
-  width: 100%;
+  width: 1260px;
   overflow: auto;
   height: 100%;
-  margin: .5em 0 0 .5em;
 }
 
 #results {
-  width: 1280px;
-  height: 600px;
+  width: 1260px;
+  height: 750px;
   overflow: hidden;
+  margin: 0;
+}
+
+footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  height: 50px;
+  width: 1280px;
+  background: #ddd;
+  border: 1px #888 solid;
+  z-index: 10;
 }
 
 .hidden {

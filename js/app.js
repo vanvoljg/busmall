@@ -105,7 +105,7 @@ var create_data = function() {
     // does not exist or is malformed, so create new datastore with current set
     data = {
       title: '# of total clicks',
-      chart_type: 'bar',
+      chart_type: 'horizontalBar',
       labels: [],
       clicked: [],
       displayed: []
@@ -126,14 +126,14 @@ var create_data = function() {
 // chart rendering function
 var render_results = function(data, ctx) {
 
-  var colors_bg = ctx.createLinearGradient(0, 0, 1280, 600);
+  var colors_bg = ctx.createLinearGradient(0, 0, 1280, 0);
   colors_bg.addColorStop(0, 'rgba(255, 99, 132, 0.5)');
   colors_bg.addColorStop(.25, 'rgba(54, 162, 235, 0.5)');
   colors_bg.addColorStop(.5, 'rgba(255, 206, 86, 0.5)');
   colors_bg.addColorStop(.75, 'rgba(75, 192, 192, 0.5)');
   colors_bg.addColorStop(1, 'rgba(153, 102, 255, 0.5)');
 
-  var colors_fg = ctx.createLinearGradient(0, 0, 1280, 600);
+  var colors_fg = ctx.createLinearGradient(0, 0, 1280, 0);
   colors_fg.addColorStop(0, 'rgba(255, 99, 132, 0.9');
   colors_fg.addColorStop(.25, 'rgba(54, 162, 235, 0.9)');
   colors_fg.addColorStop(.5, 'rgba(255, 206, 86, 0.9');
